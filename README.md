@@ -11,7 +11,7 @@ Music Off-Policy Evaluation Benchmark is a dataset designed for Off-Policy Evalu
 See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
 
 ## License
-Music Off-Policy Evaluation Benchmark © 2025 by Amazon is licensed under Creative Commons Attribution-NonCommercial 4.0 International.
+Music Off-Policy Evaluation Benchmark © 2026 by Amazon is licensed under Creative Commons Attribution-NonCommercial 4.0 International.
 
 ## Download
 
