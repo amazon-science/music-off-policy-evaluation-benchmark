@@ -36,19 +36,19 @@ The following table provides an overview of the dataset schema. Let it be $k$ th
 
 | Column                   | Type              | Dimension                  | Description                                                  |
 | ------------------------ | ----------------- | -------------------------- | ------------------------------------------------------------ |
-| actions                  | List[List[float]] | $k \times 129$ | Context vectors of size $129$ for each action in the observation. |
-| rewards                  | List[float]       | $min(k, 50)$ | Observed binary rewards per action. |
-| logging_selected_actions | List[int]         | $min(k, 50)$ | Selected actions of the logging policy $\pi_0$.              |
-| target_selected_actions  | List[int]         | $min(k, 50)$ | Selected actions of the target policy $\pi$.                 |
-| propensities             | List[List[float]] | $min(50, k) \times min(50, k)$ | Squared matrix of propensities. |
+| actions                  | List[List[float]] | $L \times 129$ | Context vectors of size $129$ for each action in the observation. |
+| rewards                  | List[float]       | $min(L, 50)$ | Observed binary rewards per action. |
+| logging_selected_actions | List[int]         | $min(L, 50)$ | Selected actions of the logging policy $\pi_0$.              |
+| target_selected_actions  | List[int]         | $min(L, 50)$ | Selected actions of the target policy $\pi$.                 |
+| propensities             | List[List[float]] | $min(L, 50) \times min(L, 50)$ | Squared matrix of propensities. |
 
 #### Actions
 
-Vectors of size 129 describing a context vector. The number of actions $k$ differs across observations.
+Vectors of size 129 describing a context vector. The number of available actions $L$ differs across observations.
 
 **Example:**
 
-Assuming for a given observation there are $k = 3$ actions, then `actions` contains $3$ vectors each of size $129$ as following:
+Assuming for a given observation there are $L = 3$ actions, then `actions` contains $3$ vectors each of size $129$ as following:
 
 ```python
 actions = [
@@ -64,7 +64,7 @@ Vector of action indices selected by $\pi_0$ in the order they are displayed.
 
 **Example:**
 
-Let's assume in a given observation there are $k = 3$ actions such that:
+Let's assume in a given observation there are $L = 3$ actions such that:
 
 ```python
 logging_selected_actions = [2, 1, 0]
@@ -77,7 +77,7 @@ Vector of action indices selected by $\pi$.
 
 **Example:**
 
-Let's assume in a given observation there are $k = 3$ actions such that:
+Let's assume in a given observation there are $L = 3$ actions such that:
 
 ```python
 logging_selected_actions = [2, 1, 0]
@@ -101,7 +101,7 @@ rewards = [1.0, 0.0, 0.0]
 It indicates that a positive reward of $1$ has been observed for the action at index $2$ in `actions` vector which is ranked by $\pi_0$ in first position.
 
 #### Propensities
-Propensity matrix $P \in R^{k \times k}$ that describes the probabilities with which actions are ranked in different positions under the logging policy $\pi_0$. Rows correspond to actions (in the order they were ranked) and columns correspond to positions in the ranking. Specifically, $P_{ij}$ describes:
+Propensity matrix $P \in R^{d \times d}$ where $d = min(L, 50)$ that describes the probabilities with which actions are ranked in different positions under the logging policy $\pi_0$. Rows correspond to actions (in the order they were ranked) and columns correspond to positions in the ranking. Specifically, $P_{ij}$ describes:
 
 
 
@@ -115,7 +115,7 @@ $$
 
 **Example:**
 
-Let it be the action space $\mathcal{A} = \{A, B, C\}$ with $k=3$ and assume:
+Let it be the action space $\mathcal{A} = \{A, B, C\}$ with $L=3$ and assume:
 
 1. The stochastic logging policy $\pi_0$ produces the ranking  $[B, A, C]$, and
 2. The probability (as determined by the policy's selection mechanism) for
