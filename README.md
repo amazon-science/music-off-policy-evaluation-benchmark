@@ -20,7 +20,7 @@ Folder structure:
 * `s3://music-off-policy-evaluation-benchmark/`
   * README.md
   * LICENSE.md
-  * data/
+  * datasets/
     * D1/
     * D2/
 
