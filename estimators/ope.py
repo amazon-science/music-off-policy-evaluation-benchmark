@@ -56,14 +56,11 @@ class OffPolicyEstimator(Estimator):
             batch = DataBatch.from_record(batch=batch)
             self.update_cumulative_metrics(cumulative_metrics, batch)
 
-        eval_metrics = OffPolicyEstimator.compute_evaluation_metrics(cumulative_metrics)
+        eval_metrics = self.compute_evaluation_metrics(cumulative_metrics)
 
         # Compute confidence intervals for the estimated reward
-        bootstrap_estimates = compute_bootstrap_estimates(
-            values=cumulative_metrics.all_rewards, func=np.mean
-        )
-        overall_avg = np.mean(cumulative_metrics.all_rewards).item()
-        ci = compute_ci(overall_avg, bootstrap_estimates)
+        bootstrap_estimates = self._compute_bootstrap_estimates(cumulative_metrics)
+        ci = compute_ci(eval_metrics.reward, bootstrap_estimates)
 
         # Decompose error into Bias^2, Variance and MSE
         err_dec = None
@@ -85,6 +82,19 @@ class OffPolicyEstimator(Estimator):
     @abstractmethod
     def compute_ips_weights(self, batch: DataBatch) -> np.ndarray:
         raise NotImplementedError
+
+    def _compute_bootstrap_estimates(
+        self, cumulative_metrics: CumulativeMetrics
+    ) -> np.ndarray:
+        """
+        Bootstrap distribution of the point estimate. Subclasses with a
+        non-mean estimator (e.g. self-normalized) should override this.
+        """
+        return np.array(
+            compute_bootstrap_estimates(
+                values=cumulative_metrics.all_rewards, func=np.mean
+            )
+        )
 
     def update_cumulative_metrics(
         self, cumulative_metrics: CumulativeMetrics, batch: DataBatch

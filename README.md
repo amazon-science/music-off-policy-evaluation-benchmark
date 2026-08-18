@@ -15,19 +15,38 @@ Music Off-Policy Evaluation Benchmark © 2026 by Amazon is licensed under Creati
 
 ## Download
 
-Folder structure:
+The dataset is hosted on the Hugging Face Hub:
+  [amazon/music-off-policy-evaluation-benchmark](https://huggingface.co/datasets/amazon/music-off-policy-evaluation-benchmark).
 
-* `s3://music-off-policy-evaluation-benchmark/`
-  * README.md
-  * LICENSE.md
-  * datasets/
-    * D1/
-    * D2/
+ Folder structure:
 
-You can either download files using their http link, e.g., https://s3.amazonaws.com/music-off-policy-evaluation-benchmark/LICENSE or interact with the S3 bucket using the [AWS CLI](https://aws.amazon.com/cli/). For example, to download the training dataset you can run:
+* `amazon/music-off-policy-evaluation-benchmark`
+  * `D1/` — used to compute the ground-truth policy value and to fit reward models
+  * `D2/` — logged data used to evaluate OPE estimators
 
+Download the parquet files locally with the [`huggingface_hub`](https://pypi.org/project/huggingface-hub/) client:
+
+```bash
+pip install huggingface-hub
 ```
-aws s3 cp --no-sign-request --recursive s3://music-off-policy-evaluation-benchmark/ .
+
+```python
+from huggingface_hub import snapshot_download
+
+DATASET_DIR = snapshot_download(
+  repo_id="amazon/music-off-policy-evaluation-benchmark",
+  repo_type="dataset",
+  local_dir="music-ope-dataset",
+  allow_patterns=["D1/*.parquet", "D2/*.parquet"],
+)
+```
+
+This mirrors the `D1/` and `D2/` folders into `music-ope-dataset/` (created automatically). The estimators read parquet directly from a filesystem path, so point them at the
+downloaded folders:
+
+```python
+D1_DATASET_PATH = f"{DATASET_DIR}/D1"
+D2_DATASET_PATH = f"{DATASET_DIR}/D2"
 ```
 
 ## Schema
